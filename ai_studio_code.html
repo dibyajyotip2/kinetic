@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KINETIX // Next-Gen Cybernetic Augmentation</title>
+  <meta name="description" content="Precision neural interfaces, ocular enhancements, and kinetic prosthetics engineered beyond biological limits." />
+
+  <!-- Futuristic & Monospace Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================
+       1. DESIGN TOKENS & VARIABLES
+       ========================================= */
+    :root {
+      --bg-void: #05070b;
+      --bg-surface: #0b1019;
+      --bg-glass: rgba(13, 19, 31, 0.72);
+      --border-dim: rgba(0, 240, 255, 0.16);
+      --border-bright: rgba(0, 240, 255, 0.55);
+
+      --cyan: #00f0ff;
+      --cyan-glow: rgba(0, 240, 255, 0.35);
+      --crimson: #ff2a5f;
+      --crimson-glow: rgba(255, 42, 95, 0.35);
+      --amber: #ffb800;
+      --text-main: #e6f1ff;
+      --text-muted: #8b9bb4;
+
+      --font-display: 'Orbitron', sans-serif;
+      --font-body: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --chamfer-sm: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+      --chamfer-md: polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px);
+      --transition: 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* =========================================
+       2. RESET & BASE STYLES
+       ========================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-void);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+    }
+
+    body {
+      position: relative;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 75%, rgba(255, 42, 95, 0.07) 0%, transparent 45%);
+    }
+
+    /* Cybernetic Grid Overlay */
+    .cyber-grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-size: 48px 48px;
+      background-image:
+        linear-gradient(to right, rgba(0, 240, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 240, 255, 0.035) 1px, transparent 1px);
+      mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
+      pointer-events: none;
+    }
+
+    /* Subtle Cursor Spotlight (Desktop) */
+    .cursor-glow {
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.07) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: -1;
+      transition: opacity 0.3s ease;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1240px, 92%);
+      margin-inline: auto;
+    }
+
+    .mono-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .mono-tag::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+      display: inline-block;
+    }
+
+    /* =========================================
+       3. HUD SCROLL PROGRESS & NAVIGATION
+       ========================================= */
+    .scroll-hud {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--cyan), var(--crimson));
+      box-shadow: 0 0 12px var(--cyan);
+      z-index: 1000;
+    }
+
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 900;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: rgba(5, 7, 11, 0.78);
+      border-bottom: 1px solid var(--border-dim);
+      transition: var(--transition);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 76px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.2rem;
+      letter-spacing: 0.1em;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border: 1.5px solid var(--cyan);
+      clip-path: var(--chamfer-sm);
+      display: grid;
+      place-items: center;
+      background: rgba(0, 240, 255, 0.08);
+      box-shadow: inset 0 0 12px rgba(0, 240, 255, 0.25);
+    }
+
+    .brand span {
+      color: var(--cyan);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      position: relative;
+      transition: color var(--transition);
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--cyan);
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 0%;
+      height: 2px;
+      background: var(--cyan);
+      transition: width var(--transition);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .sys-status {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.35rem 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #00ff9d;
+      box-shadow: 0 0 8px #00ff9d;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.8); }
+    }
+
+    /* Buttons */
+    .btn {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.65rem;
+      clip-path: var(--chamfer-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .btn-primary {
+      background: var(--cyan);
+      color: #03070b;
+      box-shadow: 0 0 24px var(--cyan-glow);
+    }
+
+    .btn-primary:hover {
+      background: #6bf7ff;
+      transform: translateY(-2px);
+      box-shadow: 0 0 32px rgba(0, 240, 255, 0.6);
+    }
+
+    .btn-outline {
+      background: rgba(0, 240, 255, 0.05);
+      color: var(--cyan);
+      border: 1px solid var(--border-bright);
+    }
+
+    .btn-outline:hover {
+      background: rgba(0, 240, 255, 0.14);
+      transform: translateY(-2px);
+    }
+
+    /* Mobile Hamburger */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 6px;
+    }
+
+    .menu-toggle span {
+      width: 24px;
+      height: 2px;
+      background: var(--cyan);
+      transition: var(--transition);
+    }
+
+    /* =========================================
+       4. HERO SECTION & INTERACTIVE CYBORG HUD
+       ========================================= */
+    .hero {
+      padding: 136px 0 90px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 3.5rem;
+      align-items: center;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5vw, 4.35rem);
+      font-weight: 900;
+      line-height: 1.06;
+      letter-spacing: -0.01em;
+      margin: 1.2rem 0 1.4rem;
+    }
+
+    .hero-title .highlight {
+      background: linear-gradient(90deg, var(--cyan), #8ef9ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 35px rgba(0, 240, 255, 0.25);
+    }
+
+    .hero-desc {
+      font-size: clamp(1rem, 1.3vw, 1.15rem);
+      color: var(--text-muted);
+      max-width: 540px;
+      margin-bottom: 2.2rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      padding-top: 1.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .metric-val {
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .metric-val span {
+      color: var(--cyan);
+    }
+
+    .metric-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Interactive Cybernetic Schematic Panel */
+    .schematic-card {
+      position: relative;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-dim);
+      clip-path: var(--chamfer-md);
+      padding: 1.5rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(0, 240, 255, 0.04);
+    }
+
+    .schematic-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .schematic-stage {
+      position: relative;
+      height: 390px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    /* Scanning laser line */
+    .scan-beam {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      box-shadow: 0 0 14px var(--cyan);
+      opacity: 0.55;
+      animation: scanline 4.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes scanline {
+      0%, 100% { top: 8%; opacity: 0.2; }
+      50% { top: 90%; opacity: 0.8; }
+    }
+
+    .cyborg-svg {
+      width: 100%;
+      max-width: 340px;
+      height: auto;
+      overflow: visible;
+    }
+
+    .hud-ring-spin {
+      transform-origin: 160px 175px;
+      animation: spinSlow 24s linear infinite;
+    }
+
+    .hud-ring-spin-rev {
+      transform-origin: 160px 175px;
+      animation: spinSlow 16s linear infinite reverse;
+    }
+
+    @keyframes spinSlow {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Interactive Hotspot Nodes */
+    .node-btn {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(5, 7, 11, 0.85);
+      border: 1.5px solid var(--cyan);
+      display: grid;
+      place-items: center;
+      transform: translate(-50%, -50%);
+      transition: var(--transition);
+      z-index: 4;
+    }
+
+    .node-btn::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+
+    .node-btn::before {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid var(--cyan);
+      opacity: 0.4;
+      animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    .node-btn.active {
+      border-color: var(--crimson);
+      transform: translate(-50%, -50%) scale(1.18);
+    }
+
+    .node-btn.active::after {
+      background: var(--crimson);
+      box-shadow: 0 0 12px var(--crimson);
+    }
+
+    .node-btn.active::before {
+      border-color: var(--crimson);
+    }
+
+    @keyframes ping {
+      75%, 100% { transform: scale(1.65); opacity: 0; }
+    }
+
+    /* Node Positions relative to schematic-stage */
+    .node-neural { top: 20%; left: 50%; }
+    .node-ocular { top: 30%; left: 44%; }
+    .node-cardiac { top: 53%; left: 52%; }
+    .node-kinetic { top: 64%; left: 29%; }
+
+    .diagnostic-readout {
+      background: rgba(5, 7, 11, 0.85);
+      border: 1px solid var(--border-dim);
+      padding: 1rem 1.15rem;
+      margin-top: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .diag-title {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      color: var(--cyan);
+      margin-bottom: 0.25rem;
+    }
+
+    .diag-desc {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+    }
+
+    .diag-stat {
+      text-align: right;
+      font-family: var(--font-mono);
+      flex-shrink: 0;
+    }
+
+    .diag-stat strong {
+      display: block;
+      font-size: 1.15rem;
+      color: var(--text-main);
+    }
+
+    .diag-stat span {
+      font-size: 0.7rem;
+      color: var(--crimson);
+    }
+
+    /* =========================================
+       5. SECTION: AUGMENTATION BENTO MATRIX
+       ========================================= */
+    .section {
+      padding: 96px 0;
+    }
+
+    .section-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+      font-weight: 700;
+      margin-top: 0.6rem;
+    }
+
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .tab-btn {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.55rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-muted);
+      clip-path: var(--chamfer-sm);
+      transition: var(--transition);
+    }
+
+    .tab-btn:hover,
+    .tab-btn.active {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: rgba(0, 240, 255, 0.08);
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
+    }
+
+    .aug-card {
+      grid-column: span 4;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-dim);
+      clip-path: var(--chamfer-md);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .aug-card.featured {
+      grid-column: span 8;
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(11, 16, 25, 0.92));
+    }
+
+    .aug-card:hover {
+      border-color: var(--cyan);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 35px rgba(0, 240, 255, 0.12);
+    }
+
+    .aug-card.hidden {
+      display: none;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-icon {
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--border-bright);
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      background: rgba(0, 240, 255, 0.06);
+      clip-path: var(--chamfer-sm);
+    }
+
+    .card-code {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.25rem 0.55rem;
+    }
+
+    .aug-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .aug-card p {
+      color: var(--text-muted);
+      font-size: 0.93rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .spec-bars {
+      display: grid;
+      gap: 0.75rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .spec-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .spec-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .spec-meta strong {
+      color: var(--cyan);
+    }
+
+    .bar-track {
+      height: 5px;
+      background: rgba(255, 255, 255, 0.07);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), #72f7ff);
+      box-shadow: 0 0 10px var(--cyan);
+      transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* =========================================
+       6. INTEGRATION PIPELINE (3 STEPS)
+       ========================================= */
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.75rem;
+      position: relative;
+    }
+
+    .step-card {
+      background: var(--bg-surface);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 2rem;
+      clip-path: var(--chamfer-md);
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .step-card:hover {
+      border-color: var(--crimson);
+    }
+
+    .step-num {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.07);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .step-card:hover .step-num {
+      color: rgba(255, 42, 95, 0.35);
+    }
+
+    .step-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      margin-bottom: 0.7rem;
+      color: var(--text-main);
+    }
+
+    .step-card p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    /* =========================================
+       7. TERMINAL CONSULTATION / CTA SECTION
+       ========================================= */
+    .terminal-box {
+      background: linear-gradient(145deg, rgba(11, 16, 25, 0.95), rgba(5, 7, 11, 0.98));
+      border: 1px solid var(--border-bright);
+      clip-path: var(--chamfer-md);
+      padding: clamp(1.75rem, 4vw, 3.5rem);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.65);
+    }
+
+    .terminal-form {
+      display: grid;
+      gap: 1.15rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .input-group label {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cyan);
+    }
+
+    .input-group input,
+    .input-group select {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 0.85rem 1rem;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+      border-color: var(--cyan);
+      background: rgba(0, 240, 255, 0.04);
+    }
+
+    .input-group select option {
+      background: var(--bg-surface);
+      color: var(--text-main);
+    }
+
+    .form-feedback {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: #00ff9d;
+      min-height: 1.2rem;
+    }
+
+    /* =========================================
+       8. FOOTER
+       ========================================= */
+    .footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 2.5rem 0;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* =========================================
+       9. REVEAL ANIMATIONS & RESPONSIVE BREAKPOINTS
+       ========================================= */
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1024px) {
+      .hero-grid,
+      .terminal-box {
+        grid-template-columns: 1fr;
+      }
+
+      .aug-card,
+      .aug-card.featured {
+        grid-column: span 6;
+      }
+
+      .pipeline-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sys-status,
+      .nav-actions .btn {
+        display: none;
+      }
+
+      .menu-toggle {
+        display: flex;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 76px;
+        right: -100%;
+        width: 100%;
+        height: calc(100vh - 76px);
+        background: rgba(5, 7, 11, 0.96);
+        backdrop-filter: blur(18px);
+        flex-direction: column;
+        justify-content: center;
+        gap: 2.5rem;
+        transition: right 0.35s ease;
+      }
+
+      .nav-links.open {
+        right: 0;
+      }
+
+      .aug-card,
+      .aug-card.featured {
+        grid-column: span 12;
+      }
+
+      .hero-metrics {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .cursor-glow {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Effects & Scroll Progress -->
+  <div class="scroll-hud" id="scrollHud"></div>
+  <div class="cyber-grid-bg" aria-hidden="true"></div>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="brand" aria-label="Kinetix Cybernetics Home">
+        <div class="brand-mark">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2">
+            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+        KINETIX<span>//09</span>
+      </a>
+
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#augments">Augments</a></li>
+          <li><a href="#protocol">Integration</a></li>
+          <li><a href="#sync">Neural Sync</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="sys-status" aria-label="System Status">
+          <span class="pulse-dot"></span>
+          SYS: ONLINE // 99.8%
+        </div>
+        <a href="#sync" class="btn btn-outline">Initiate Sync</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <span class="mono-tag">GEN-IV BIOMECHANICAL ARCHITECTURE</span>
+          <h1 class="hero-title">
+            EVOLVE PAST <br />
+            <span class="highlight scramble-text" data-value="BIOLOGY.">BIOLOGY.</span>
+          </h1>
+          <p class="hero-desc">
+            Zero-latency neural interfaces, hyper-spectrum ocular optics, and titanium-carbon prosthetics engineered to fuse seamlessly with the human nervous system.
+          </p>
+
+          <div class="hero-cta">
+            <a href="#sync" class="btn btn-primary">Book Calibration</a>
+            <a href="#augments" class="btn btn-outline">Explore Hardware</a>
+          </div>
+
+          <div class="hero-metrics">
+            <div>
+              <div class="metric-val">0.4<span>ms</span></div>
+              <div class="metric-label">Synaptic Latency</div>
+            </div>
+            <div>
+              <div class="metric-val">99.9<span>%</span></div>
+              <div class="metric-label">Bio-Compatibility</div>
+            </div>
+            <div>
+              <div class="metric-val">40<span>YR</span></div>
+              <div class="metric-label">Solid-State Cell</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Cybernetic HUD Schematic -->
+        <div class="schematic-card">
+          <div class="schematic-header">
+            <span>UNIT // CYBORG-SPEC-04</span>
+            <span>SELECT NODE TO INSPECT</span>
+          </div>
+
+          <div class="schematic-stage">
+            <div class="scan-beam" aria-hidden="true"></div>
+
+            <!-- Inline SVG Cybernetic Anatomy -->
+            <svg class="cyborg-svg" viewBox="0 0 320 350" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Interactive Cybernetic Schematic">
+              <!-- Rotating HUD Rings -->
+              <circle class="hud-ring-spin" cx="160" cy="175" r="135" stroke="rgba(0,240,255,0.18)" stroke-dasharray="12 8" stroke-width="1"/>
+              <circle class="hud-ring-spin-rev" cx="160" cy="175" r="112" stroke="rgba(255,42,95,0.22)" stroke-dasharray="4 10" stroke-width="1"/>
+
+              <!-- Stylized Cyborg Silhouette & Circuitry -->
+              <path d="M160 38 C134 38 118 58 118 85 C118 106 128 122 142 130 L142 148 L92 168 L64 252 L88 260 L110 198 L116 320 L146 320 L150 232 L170 232 L174 320 L204 320 L210 198 L232 260 L256 252 L228 168 L178 148 L178 130 C192 122 202 106 202 85 C202 58 186 38 160 38 Z"
+                    fill="rgba(0, 240, 255, 0.04)" stroke="rgba(0, 240, 255, 0.48)" stroke-width="1.5"/>
+
+              <!-- Neural Spine & Cybernetic Tracts -->
+              <path d="M160 56 V225" stroke="#00f0ff" stroke-width="1.5" stroke-dasharray="4 3"/>
+              <path d="M160 155 L108 178 L82 246" stroke="#ff2a5f" stroke-width="1.4" opacity="0.8"/>
+              <path d="M160 155 L212 178 L238 246" stroke="#00f0ff" stroke-width="1.2" opacity="0.6"/>
+              <polygon points="160,162 176,176 160,196 144,176" fill="rgba(0,240,255,0.14)" stroke="#00f0ff" stroke-width="1.2"/>
+              <!-- Cyber Visor Band -->
+              <path d="M130 78 H190 L184 90 H136 Z" fill="rgba(0,240,255,0.2)" stroke="#00f0ff" stroke-width="1.2"/>
+            </svg>
+
+            <!-- Interactive Hotspots -->
+            <button class="node-btn node-neural active" data-node="neural" aria-label="Inspect Neural Cortex"></button>
+            <button class="node-btn node-ocular" data-node="ocular" aria-label="Inspect Ocular Visor"></button>
+            <button class="node-btn node-cardiac" data-node="cardiac" aria-label="Inspect Cardiac Core"></button>
+            <button class="node-btn node-kinetic" data-node="kinetic" aria-label="Inspect Kinetic Limb"></button>
+          </div>
+
+          <div class="diagnostic-readout" id="diagReadout">
+            <div>
+              <div class="diag-title" id="diagTitle">SYNAPSE-X9 CORTEX</div>
+              <div class="diag-desc" id="diagDesc">Direct optical-fiber neural bridge with real-time cognitive co-processing.</div>
+            </div>
+            <div class="diag-stat">
+              <strong id="diagMetric">12.4 TB/s</strong>
+              <span id="diagSub">BANDWIDTH</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Augmentation Bento Grid -->
+    <section class="section" id="augments">
+      <div class="container">
+        <div class="section-header reveal">
+          <div>
+            <span class="mono-tag">HARDWARE CATALOG</span>
+            <h2 class="section-title">Modular Augmentation Suite</h2>
+          </div>
+
+          <div class="filter-tabs" role="tablist" aria-label="Filter Augmentations">
+            <button class="tab-btn active" data-filter="all">All Systems</button>
+            <button class="tab-btn" data-filter="neural">Neural</button>
+            <button class="tab-btn" data-filter="sensory">Sensory</button>
+            <button class="tab-btn" data-filter="kinetic">Kinetic</button>
+          </div>
+        </div>
+
+        <div class="bento-grid">
+          <!-- Featured Card -->
+          <article class="aug-card featured reveal" data-category="neural">
+            <div>
+              <div class="card-top">
+                <div class="card-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h2v2a4 4 0 0 0 8 0v-2h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4z"/>
+                  </svg>
+                </div>
+                <span class="card-code">MOD-01 // FLAGSHIP</span>
+              </div>
+              <h3>Synapse-X9 Neural Co-Processor</h3>
+              <p>Sub-cranial graphene lace engineered for instantaneous memory indexing, encrypted wireless telemetry, and seamless control of external cybernetic hardware.</p>
+            </div>
+            <div class="spec-bars">
+              <div class="spec-row">
+                <div class="spec-meta"><span>Synaptic Throughput</span><strong>98%</strong></div>
+                <div class="bar-track"><div class="bar-fill" style="width: 98%;"></div></div>
+              </div>
+              <div class="spec-row">
+                <div class="spec-meta"><span>Thermal Efficiency</span><strong>94%</strong></div>
+                <div class="bar-track"><div class="bar-fill" style="width: 94%;"></div></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="aug-card reveal" data-category="sensory">
+            <div>
+              <div class="card-top">
+                <div class="card-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </div>
+                <span class="card-code">OPT-04</span>
+              </div>
+              <h3>Kiroshi-Grade Ocular Suite</h3>
+              <p>Multi-spectral retina implants offering 40x optical zoom, thermal overlays, and real-time AR HUD telemetry.</p>
+            </div>
+            <div class="spec-bars">
+              <div class="spec-row">
+                <div class="spec-meta"><span>Spectral Range</span><strong>92%</strong></div>
+                <div class="bar-track"><div class="bar-fill" style="width: 92%;"></div></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="aug-card reveal" data-category="kinetic">
+            <div>
+              <div class="card-top">
+                <div class="card-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                </div>
+                <span class="card-code">KIN-07</span>
+              </div>
+              <h3>Valkyrie Carbon Prosthetic</h3>
+              <p>Electro-myographic forged carbon arm with haptic tactile sensors capable of micro-surgical precision or 450kg lift torque.</p>
+            </div>
+            <div class="spec-bars">
+              <div class="spec-row">
+                <div class="spec-meta"><span>Actuator Torque</span><strong>96%</strong></div>
+                <div class="bar-track"><div class="bar-fill" style="width: 96%;"></div></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="aug-card reveal" data-category="kinetic">
+            <div>
+              <div class="card-top">
+                <div class="card-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                </div>
+                <span class="card-code">ARM-12</span>
+              </div>
+              <h3>Subdermal Kinetic Weave</h3>
+              <p>Flexible non-Newtonian polymer mesh beneath the epidermis, dispersing high-velocity impact forces instantaneously.</p>
+            </div>
+            <div class="spec-bars">
+              <div class="spec-row">
+                <div class="spec-meta"><span>Impact Dispersion</span><strong>89%</strong></div>
+                <div class="bar-track"><div class="bar-fill" style="width: 89%;"></div></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 5 -->
+          <article class="aug-card reveal" data-category="neural">
+            <div>
+              <div class="card-top">
+                <div class="card-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                  </svg>
+                </div>
+                <span class="card-code">BIO-09</span>
+              </div>
+              <h3>Aegis Biometric Core</h3>
+              <p>Closed-loop nanite blood filtration and kinetic-recharge cardiac regulator extending aerobic endurance by 300%.</p>
+            </div>
+            <div class="spec-bars">
+              <div class="spec-row">
+                <div class="spec-meta"><span>Bio-Stability</span><strong>99%</strong></div>
+                <div class="bar-track"><div class="bar-fill" style="width: 99%;"></div></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Integration Pipeline -->
+    <section class="section" id="protocol">
+      <div class="container">
+        <div class="section-header reveal">
+          <div>
+            <span class="mono-tag">SURGICAL PROTOCOL</span>
+            <h2 class="section-title">Three-Stage Cybernetic Sync</h2>
+          </div>
+        </div>
+
+        <div class="pipeline-grid">
+          <div class="step-card reveal">
+            <div class="step-num">01</div>
+            <h3>Neural Topography Scan</h3>
+            <p>High-resolution quantum MRI maps your unique synaptic pathways and bone density to fabricate custom-fit titanium interfaces.</p>
+          </div>
+
+          <div class="step-card reveal">
+            <div class="step-num">02</div>
+            <h3>Micro-Robotic Integration</h3>
+            <p>Performed in zero-infection sterile bays with autonomous micro-suturing, reducing biological recovery down to 48 hours.</p>
+          </div>
+
+          <div class="step-card reveal">
+            <div class="step-num">03</div>
+            <h3>Firmware & Reflex Calibration</h3>
+            <p>Personalized neural-feedback tuning aligns hardware response times with your subconscious motor instincts.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Consultation / Neural Sync Terminal -->
+    <section class="section" id="sync">
+      <div class="container">
+        <div class="terminal-box reveal">
+          <div>
+            <span class="mono-tag">ENCRYPTED UPLINK</span>
+            <h2 class="section-title" style="margin-bottom: 1rem;">Initiate Your Upgrade</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+              Schedule a private biometric compatibility screening at our Neo-Tokyo, Zurich, or Bengaluru augmentation clinics.
+            </p>
+            <div class="mono-tag" style="color: var(--text-muted);">
+              AES-512 QUANTUM ENCRYPTION ACTIVE
+            </div>
+          </div>
+
+          <form class="terminal-form" id="syncForm">
+            <div class="input-group">
+              <label for="subjectName">Subject Designation / Name</label>
+              <input type="text" id="subjectName" placeholder="e.g. Elena Vance" required />
+            </div>
+
+            <div class="input-group">
+              <label for="uplinkEmail">Encrypted Comms (Email)</label>
+              <input type="email" id="uplinkEmail" placeholder="elena@nexus.io" required />
+            </div>
+
+            <div class="input-group">
+              <label for="moduleSelect">Primary Augmentation Module</label>
+              <select id="moduleSelect">
+                <option value="Synapse-X9">Synapse-X9 Neural Co-Processor</option>
+                <option value="Ocular Suite">Kiroshi-Grade Ocular Suite</option>
+                <option value="Valkyrie Prosthetic">Valkyrie Carbon Prosthetic</option>
+                <option value="Full Suite">Full Biometric Integration</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+              Transmit Screening Request
+            </button>
+            <div class="form-feedback" id="formFeedback" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>KINETIX CYBERNETICS CORP // SECTOR 09</div>
+      <div>LAT 12.9716° N // LON 77.5946° E</div>
+      <div>© 2026 KINETIX. ALL SYSTEMS NOMINAL.</div>
+    </div>
+  </footer>
+
+  <script>
+    // =========================================
+    // 1. INTERACTIVE CYBORG SCHEMATIC NODES
+    // =========================================
+    const nodeData = {
+      neural: {
+        title: "SYNAPSE-X9 CORTEX",
+        desc: "Direct optical-fiber neural bridge with real-time cognitive co-processing.",
+        metric: "12.4 TB/s",
+        sub: "BANDWIDTH"
+      },
+      ocular: {
+        title: "KIROSHI OPTIC VISOR",
+        desc: "Hyper-spectral targeting, night-vision enhancement, and 40x optical zoom.",
+        metric: "0.02 ms",
+        sub: "REFRESH RATE"
+      },
+      cardiac: {
+        title: "AEGIS BIOMETRIC CORE",
+        desc: "Solid-state kinetic battery & nanite oxygenator sustaining peak endurance.",
+        metric: "40 YRS",
+        sub: "CELL LIFESPAN"
+      },
+      kinetic: {
+        title: "VALKYRIE CARBON ARM",
+        desc: "Titanium-carbon lattice actuator with sub-millimeter haptic feedback.",
+        metric: "450 KG",
+        sub: "PEAK TORQUE"
+      }
+    };
+
+    const nodeButtons = document.querySelectorAll('.node-btn');
+    const diagTitle = document.getElementById('diagTitle');
+    const diagDesc = document.getElementById('diagDesc');
+    const diagMetric = document.getElementById('diagMetric');
+    const diagSub = document.getElementById('diagSub');
+
+    nodeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        nodeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const info = nodeData[btn.dataset.node];
+        scrambleElement(diagTitle, info.title);
+        diagDesc.textContent = info.desc;
+        diagMetric.textContent = info.metric;
+        diagSub.textContent = info.sub;
+      });
+    });
+
+    // =========================================
+    // 2. CYBERNETIC TEXT SCRAMBLE EFFECT
+    // =========================================
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789//#%";
+
+    function scrambleElement(el, finalText) {
+      let iteration = 0;
+      clearInterval(el._scrambleInterval);
+
+      el._scrambleInterval = setInterval(() => {
+        el.textContent = finalText
+          .split("")
+          .map((letter, idx) => {
+            if (letter === " ") return " ";
+            if (idx < iteration) return finalText[idx];
+            return chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join("");
+
+        if (iteration >= finalText.length) {
+          clearInterval(el._scrambleInterval);
+        }
+        iteration += 1 / 2;
+      }, 24);
+    }
+
+    // Trigger scramble on hero title on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const heroHighlight = document.querySelector('.scramble-text');
+      if (heroHighlight) {
+        scrambleElement(heroHighlight, heroHighlight.dataset.value);
+      }
+    });
+
+    // =========================================
+    // 3. AUGMENTATION CATEGORY FILTERING
+    // =========================================
+    const filterTabs = document.querySelectorAll('.tab-btn');
+    const augCards = document.querySelectorAll('.aug-card');
+
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const filter = tab.dataset.filter;
+        augCards.forEach(card => {
+          if (filter === 'all' || card.dataset.category === filter) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // =========================================
+    // 4. SCROLL HUD & INTERSECTION REVEAL
+    // =========================================
+    const scrollHud = document.getElementById('scrollHud');
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      scrollHud.style.width = `${progress}%`;
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // =========================================
+    // 5. CURSOR SPOTLIGHT & MOBILE MENU
+    // =========================================
+    const cursorGlow = document.getElementById('cursorGlow');
+    window.addEventListener('mousemove', (e) => {
+      if (window.innerWidth > 768) {
+        cursorGlow.style.left = `${e.clientX}px`;
+        cursorGlow.style.top = `${e.clientY}px`;
+      }
+    });
+
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    menuToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // =========================================
+    // 6. TERMINAL FORM TRANSMISSION SIMULATION
+    // =========================================
+    const syncForm = document.getElementById('syncForm');
+    const formFeedback = document.getElementById('formFeedback');
+
+    syncForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('subjectName').value.trim();
+      const moduleChoice = document.getElementById('moduleSelect').value;
+
+      formFeedback.style.color = "#00f0ff";
+      formFeedback.textContent = ">> ENCRYPTING BIOMETRIC PACKET...";
+
+      setTimeout(() => {
+        formFeedback.style.color = "#00ff9d";
+        formFeedback.textContent = `>> CONFIRMED: Screening queued for ${name} [${moduleChoice}].`;
+        syncForm.reset();
+      }, 900);
+    });
+  </script>
+</body>
+</html>
